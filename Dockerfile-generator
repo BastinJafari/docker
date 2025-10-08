@@ -1,6 +1,6 @@
 ARG ruby_version=3.3.4
 
-FROM ruby:${ruby_version}
+FROM ruby:${ruby_version}-bookworm
 LABEL maintainer="hola@decidim.org"
 
 ARG decidim_version=30.2
@@ -11,7 +11,7 @@ ENV LC_ALL C.UTF-8
 
 WORKDIR /code
 
-RUN apt-get install -y git imagemagick p7zip wget \
+RUN apt-get update && apt-get install -y git imagemagick p7zip wget \
   && apt-get clean
 
 RUN curl -sL https://deb.nodesource.com/setup_${node_version}.x | bash - \
