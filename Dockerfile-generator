@@ -18,6 +18,8 @@ RUN curl -sL https://deb.nodesource.com/setup_${node_version}.x | bash - \
   && apt-get install -y nodejs \
   && apt-get clean
 
+RUN npm install -g yarn@1.22.18
+
 RUN gem install bundler --version '>= 2.3.12' \
   && gem install decidim:${decidim_version} --no-document
 
