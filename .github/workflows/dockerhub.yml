@@ -55,6 +55,7 @@ jobs:
     - name: Build decidim-generator Image
       env:
         RUBY_VERSION: ${{ steps.ruby-version.outputs.version }}
+        NODE_VERSION: ${{ steps.node-version.outputs.version }}
         DECIDIM_VERSION: ${{ steps.decidim-version.outputs.version }}
       run: |
         docker build \
