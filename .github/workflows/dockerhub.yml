@@ -36,11 +36,18 @@ jobs:
       env:
         RUBY_VERSION_URL: https://raw.githubusercontent.com/decidim/decidim/${{ steps.decidim-tag.outputs.tag }}/.ruby-version
       run: |
-        echo ::set-output name=version::$(curl -s $RUBY_VERSION_URL)
+        echo "version=$(curl -s $RUBY_VERSION_URL)" >> $GITHUB_OUTPUT
 
     - name: Set Decidim Version
       id: decidim-version
       run: echo ::set-output name=version::$(echo ${{ steps.decidim-tag.outputs.tag }} | cut -c2-)
+
+    - name: Set Node Version
+      id: node-version
+      env:
+        NODE_VERSION_URL: https://raw.githubusercontent.com/decidim/decidim/${{ steps.decidim-tag.outputs.tag }}/.node-version
+      run:
+        echo "version=$(curl -s $NODE_VERSION_URL | cut -d. -f1)" >> $GITHUB_OUTPUT
 
     - name: Checkout Our Repo
       uses: actions/checkout@v2
@@ -53,6 +60,7 @@ jobs:
         docker build \
         --build-arg ruby_version=$RUBY_VERSION \
         --build-arg decidim_version=$DECIDIM_VERSION \
+        --build-arg node_version=$NODE_VERSION \
         --file Dockerfile-generator \
         -t $GENERATOR_IMAGE_NAME .
         docker tag $GENERATOR_IMAGE_NAME $GENERATOR_IMAGE_NAME:$TAG
@@ -80,11 +88,13 @@ jobs:
     - name: Build decidim-test Image
       env:
         RUBY_VERSION: ${{ steps.ruby-version.outputs.version }}
+        NODE_VERSION: ${{ steps.node-version.outputs.version }}
         DECIDIM_VERSION: ${{ steps.decidim-version.outputs.version }}
       run: |
         docker build \
         --build-arg base_image=ghcr.io/$GENERATOR_IMAGE_NAME:$TAG \
         --build-arg decidim_version=$DECIDIM_VERSION \
+        --build-arg node_version=$NODE_VERSION \
         --file Dockerfile-test \
         -t $TEST_IMAGE_NAME .
         docker tag $TEST_IMAGE_NAME $TEST_IMAGE_NAME:$TAG
@@ -112,6 +122,7 @@ jobs:
     - name: Build decidim-dev Image
       env:
         RUBY_VERSION: ${{ steps.ruby-version.outputs.version }}
+        NODE_VERSION: ${{ steps.node-version.outputs.version }}
         DECIDIM_VERSION: ${{ steps.decidim-version.outputs.version }}
       run: |
         docker build \
@@ -143,6 +154,7 @@ jobs:
     - name: Build decidim (app) Image
       env:
         RUBY_VERSION: ${{ steps.ruby-version.outputs.version }}
+        NODE_VERSION: ${{ steps.node-version.outputs.version }}
         DECIDIM_VERSION: ${{ steps.decidim-version.outputs.version }}
       run: |
         docker build \
