@@ -1,0 +1,12 @@
+services:
+  app:
+    depends_on:
+      - db
+  db:
+    image: postgres:17
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-decidim}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-decidim}
+      POSTGRES_DB: ${POSTGRES_DB:-decidim}

@@ -1,0 +1,11 @@
+services:
+  app:
+    depends_on:
+      - cache
+  cache:
+    image: redis
+    volumes:
+      - redis_data:/data
+    restart: always
+volumes:
+  redis_data: {}

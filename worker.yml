@@ -1,0 +1,17 @@
+services:
+  sidekiq:
+    image: ${DECIDIM_IMAGE:-decidim/decidim:latest}
+    entrypoint: ["/code/vendor/sidekiq_entrypoint.sh"]
+    command: "bundle exec sidekiq -C config/sidekiq.yml"
+    env_file:
+      - .env
+    volumes:
+      - ./scripts:/code/vendor
+    environment:
+      - DATABASE_URL
+      - SECRET_KEY_BASE
+      - DECIDIM_FORCE_SSL=false
+      - QUEUE_ADAPTER=sidekiq
+      - REDIS_URL=redis://redis:6379/1
+    links:
+      - cache
