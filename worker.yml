@@ -1,5 +1,5 @@
 services:
-  sidekiq:
+  worker:
     image: ${DECIDIM_IMAGE:-decidim/decidim:latest}
     entrypoint: ["/code/vendor/sidekiq_entrypoint.sh"]
     command: "bundle exec sidekiq -C config/sidekiq.yml"

@@ -57,7 +57,7 @@ read -p "SMTP_DOMAIN: " SMTP_DOMAIN
 
 echo "───────────────────────────────────────────────"
 echo "To start, we are going to store assets locally"
-read -p "Do you have an external database already set up? [y/N] " yn
+read -p "Do you have an external bucket [y/N] " yn
 STORAGE="local"
 
 echo "───────────────────────────────────────────────"
@@ -72,12 +72,16 @@ if [ -f .env ]; then
 else
   echo "✅ Writing the environment variables to .env file..."
 
+  SECRET_KEY_BASE=$(openssl rand -hex 64)
+
   cat >.env <<EOF
 DECIDIM_IMAGE=$DECIDIM_IMAGE
 DECIDIM_APPLICATION_NAME="$DECIDIM_APPLICATION_NAME"
 DECIDIM_SYSTEM_ADMIN_EMAIL="$DECIDIM_SYSTEM_ADMIN_EMAIL"
 DECIDIM_SYSTEM_ADMIN_NAME="$DECIDIM_SYSTEM_ADMIN_NAME"
 DECIDIM_DOMAIN="$DECIDIM_DOMAIN"
+
+SECRET_KEY_BASE=$SECRET_KEY_BASE
 
 POSTGRES_DB="$DATABASE_NAME"
 POSTGRES_NAME="$DATABASE_USER"
