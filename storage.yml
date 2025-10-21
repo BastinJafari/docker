@@ -1,0 +1,6 @@
+services:
+  app:
+    volumes:
+      - storage_volume:/code/storage
+volumes:
+  storage_volume: {}
