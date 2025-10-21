@@ -1,13 +1,13 @@
 services:
   app:
     container_name: decidim
-    image: ${DECIDIM_IMAGE}
+    image: ${DECIDIM_IMAGE:-"decidim/decidim:latest"}
     command: "bin/rails server -b 0.0.0.0"
-    volumes:
-      - ./storage:/app/storage
+    pull_policy: always
     restart: always
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.whoami.rule=Host(`$DECIDIM_DOMAIN`)"
       - "traefik.http.routers.app.rule=PathPrefix(`/`)"
       - "traefik.http.routers.app.entrypoints=web"
       - "traefik.http.services.app.loadbalancer.server.port=3000"
@@ -38,7 +38,3 @@ services:
       - MAPS_API_KEY
       - MAPS_PROVIDER=${MAPS_PROVIDER:-here}
       - RACK_ATTACK_SECRET
-    depends_on:
-      - db
-      - cache
-
