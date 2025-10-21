@@ -28,7 +28,11 @@ echo -e "* and it's up to you to take care of your systems.                    *
 echo -e "*                                                                     *"
 echo -e "***********************************************************************"
 
-REPOSITORY_PATH="$HOME/decidim"
+REPOSITORY_PATH=${DECIDIM_PATH:-/opt/decidim}
+REPOSITORY_URL="https://github.com/decidim/docker.git"
+REPOSITORY_BRANCH="feat/decidim_install"
+
+echo $REPOSITORY_PATH
 
 set -e
 
@@ -42,12 +46,19 @@ else
   sudo apt clean
 fi
 
-echo "Downloading decidim-docker repository to "
-if [ ! -d $REPOSITORY_PATH ]; then
-  git clone -b feat/decidim_install https://github.com/decidim/docker.git $REPOSITORY_PATH
+if [ ! -d "$REPOSITORY_PATH" ]; then
+  sudo mkdir -p "$REPOSITORY_PATH"
+  sudo chown "$USER":"$USER" "$REPOSITORY_PATH"
 fi
 
-cd $REPOSITORY_PATH
+cd "$REPOSITORY_PATH"
+
+echo "Downloading decidim-docker repository to ${REPOSITORY_PATH}"
+if [ ! -d ".git" ]; then
+  cp -r /vagrant/* $REPOSITORY_PATH
+else
+  git pull
+fi
 
 echo "Checking the OS version"
 source $REPOSITORY_PATH/scripts/dependencies/os_version.sh
@@ -68,6 +79,8 @@ source $REPOSITORY_PATH/scripts/dependencies/open_ports.sh
 echo "Asking for necessary variables."
 source $REPOSITORY_PATH/scripts/dependencies/build_env.sh
 
+echo "external database: ${EXTERNAL_DATABASE}"
+
 # Start decidim
-echo "Starging Decidim..."
+echo "Starting Decidim..."
 source $REPOSITORY_PATH/scripts/up.sh
