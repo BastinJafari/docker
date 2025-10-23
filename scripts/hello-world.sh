@@ -1,12 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-# runs db:drop, db:create and db:migrate.
-# We can't use db:schema:load because we don't have the db/schema.rb
+# This is the entrypoint script for the 'decidim' service.
+#
+# It checks if the database exists and if not, it will be created,
+# migrated and seeded. After that, it will run whatever command
+# is passed to it.
+#
+# This is useful so we don't have to worry about running commands on the
 # file when we create the app for the first time and migrations haven't
 # been run yet.
-bundle exec rake db:migrate:reset
-# Adds basic system, admin and user accounts, and lorem ipsum content.
-bundle exec rake db:seed
+
+echo '-----------------------------------------------'
+echo ''
+echo 'Done! Starting your Decidim instance!          '
+echo '-----------------------------------------------'
 
 exec "$@"
